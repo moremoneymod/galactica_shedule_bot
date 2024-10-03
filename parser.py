@@ -27,10 +27,11 @@ class SheduleParser:
         group_column_coordinates = self.get_groups_coordinates()
         for row in self._worksheet.iter_rows(min_row=7):
             for cell in row:
-                if cell.value is None and cell.column in group_column_coordinates:
-                    cell_value = "Нет пар"
-                elif cell.value is None:
-                    continue
+                if cell.value is None:
+                    if cell.column in group_column_coordinates:
+                        cell_value = "Нет пары"
+                    else:
+                        continue
                 else:
                     cell_value = str(cell.value)
                 if cell_value == '1' or cell_value == '3' or cell_value == '5' or cell_value == '7':
@@ -63,10 +64,10 @@ class SheduleParser:
                         if cell_value.count(',') == 0:
                             cell_value = re.sub('  +', ',', cell_value)
                         cell_value = cell_value.replace(' ', '')
-                        groups.extend(cell_value.split(','))
+                        cell_value = cell_value.replace(',', ", ")
                     else:
                         cell_value = cell_value.replace(' ', '')
-                        groups.append(cell_value)
+                    groups.append(cell_value)
         print(groups)
         return groups
 
@@ -82,4 +83,17 @@ class SheduleParser:
                     print(cell.column)
         return group_coordinates
 
-
+    def get_shedule_for_each_group(self) -> Dict:
+        groups = self.get_group_columns()
+        raw_shedule = self.read_sheet()
+        shedule = {}
+        for group_index in range(len(groups)):
+            lesson_index = group_index
+            shedule[groups[group_index]] = {}
+            for day in raw_shedule:
+                shedule[groups[group_index]][day] = {}
+                for time in raw_shedule[day]:
+                    print(day, time, raw_shedule[day][time][lesson_index], groups[group_index])
+                    shedule[groups[group_index]][day][time] = raw_shedule[day][time][lesson_index]
+        print(shedule)
+        return shedule
