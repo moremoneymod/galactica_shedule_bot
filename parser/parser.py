@@ -5,10 +5,11 @@ from openpyxl import load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
 from typing import List, Dict, Any
 import re
-from utils import json_utils
+# from utils.json_utils import json_converter, save_json
+from parser.utils.json_utils import json_converter, save_json
 
 
-class SheduleParser:
+class ScheduleParser:
     def __init__(self, document_path: str) -> None:
         self._document_path = document_path
 
@@ -96,12 +97,14 @@ class SheduleParser:
         print(schedule)
         return schedule
 
-    def get_json_schedule(self, schedule: Dict) -> None:
-        json_schedule = json_utils.json_converter(schedule)
+    @staticmethod
+    def get_json_schedule(schedule: Dict) -> None:
+        json_schedule = json_converter(schedule)
         print(json_schedule)
-        json_utils.save_json(json_schedule)
+        save_json(json_schedule)
 
-    def get_json_groups(self, groups: List) -> None:
-        json_groups = json_utils.json_converter(groups)
+    @staticmethod
+    def get_json_groups(groups: List) -> None:
+        json_groups = json_converter(groups)
         print(json_groups)
-        json_utils.save_json(json_groups, file_name="groups.json")
+        save_json(json_groups, file_name="groups.json")

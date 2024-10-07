@@ -48,6 +48,7 @@ async def callback_query_handler(callback_query: aiogram.types.CallbackQuery) ->
     data = callback_query.data.split("!")
     group = data[0].replace("gr_", '')
     day = data[1].replace("d_", '')
+    course = group.split('-')[1][0]
 
     f = open(os.path.split(os.path.dirname(__file__))[0] + '/../schedule.json', 'r', encoding='cp1251')
     json_data = json.load(f)
@@ -55,7 +56,15 @@ async def callback_query_handler(callback_query: aiogram.types.CallbackQuery) ->
 
     builder = InlineKeyboardBuilder()
     lessons = json_data[group][day]
-    message = utils.create_lessons_message(day, lessons)
+
+    f = open(os.path.split(os.path.dirname(__file__))[0] + '/../time.json', 'r', encoding='UTF-8')
+    json_data1 = json.load(f)
+    f.close()
+    print(json_data1)
+    time = json_data1[course]
+
+    message = utils.create_lessons_message(day, lessons, time)
+
     print(json_data[group][day])
     builder.button(text="Назад", callback_data=f"group_{group}")
     builder.adjust(1, 1)
